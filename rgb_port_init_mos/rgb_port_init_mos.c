@@ -1,16 +1,9 @@
-/*
- * TITLE:
- * DATE:
- * AUTHOR:
- */ 
-
-
 #define F_CPU 16000000
 
 #include <avr/io.h>
 #include <util/delay.h>
 
-void rgb_led_init() {
+void rgb_led_button_init() {
 	// PORTH 3 - R; 5 - G; 4 - B
 	// Initialized to input
 	DDRH = DDRH & 0xC7;
@@ -20,7 +13,7 @@ void rgb_led_init() {
 }
 
 int main(void) {
-	rgb_led_init();
+	rgb_led_button_init();
 	while(1){
 	}
 	return 0;	
