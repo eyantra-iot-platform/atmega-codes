@@ -28,6 +28,6 @@ with a delimeter.
 void concat_params(char* result, char* param1, char* param2);
 
 /* Create UART-RPC response message */
-int create_rpc_response(char method, char* response);
+int create_rpc_response(char* response, char method, char* params);
 
 #endif

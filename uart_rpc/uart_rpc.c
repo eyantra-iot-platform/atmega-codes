@@ -28,7 +28,13 @@ int main(void) {
 
 		parse_rpc_request(&method, params, message);
 		
-		if (method == 30) {
+		if (method == 20) {
+			double flow_readings = 7.65;
+			char response[100];
+			create_rpc_response(response, method, "d7.65");
+			uart0_puts(response);
+		}
+		else if (method == 30) {
 			int red_i;
 			if (sscanf(params, "i%d", &red_i) == 1) {
 				brightness(red_i, 0, 0);
@@ -47,9 +53,12 @@ int main(void) {
 				brightness(0, 0, blue_i);
 			}
 		}
-		// else if (method == 33) {
-			
-		// }
+		else if (method == 33) {
+			int red_i, green_i, blue_i;
+			if (sscanf(params, "i%d,i%d,i%d", &red_i, &green_i, &blue_i) == 3) {
+				brightness(red_i, green_i, blue_i);
+			}
+		}
 	}
 	return 0;	
 }
