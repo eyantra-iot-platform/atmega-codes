@@ -1,5 +1,6 @@
 #include "eyfi_mega.h"
 #include "uart.h"
+#include "utils.h"
 
 uint16_t rx_byte;
 
@@ -11,70 +12,44 @@ int main(void) {
 	rgb_led_init();
 	
 	while(1) {
-		int i = 0, START_PRC = 0;
-		char message[60];
-		rx_byte = uart0_getc();
-		
-		if ((rx_byte & 0xFF00) == UART_NO_DATA)
+		int status;
+		char message[100], params[100];
+		char method;
+
+		status = fetch_rpc_request(message, uart0_getc);
+
+		if (status == -1)
 			continue;
-		
-		rx_byte = rx_byte & 0x00FF;
-		uart0_putc((char)rx_byte);
-		if ((char)rx_byte == '#') {
-			i = 0;
-			do {
-				uint8_t recv_byte;
-				rx_byte = uart0_getc();
-				if ((rx_byte & 0xFF00) != 0)
-					continue;
-				
-				recv_byte = rx_byte & 0x00FF;
-				if (recv_byte == '#') {
-					i = 0;
-					continue;
-				} 
-				
-				if (recv_byte == '@') {
-					START_PRC = 1;
-					break;
-				}
-				else {
-					message[i++] = recv_byte;
-				}
-			} while ((char) rx_byte != '@');
 
-			message[i] = '\0';
+		if (status == 0) {
 			uart0_puts(message);
+			continue;
+		}
 
-			if (START_PRC == 0)
-				continue;
-
-			// start process
-			switch (message[0]) {
-				case 30:
-				{
-					red_led_on();
-					green_led_off();
-					blue_led_off();
-					break;
-				}
-				case 31:
-				{
-					red_led_off();
-					green_led_on();
-					blue_led_off();
-					break;
-				}
-				case 32:
-				{
-					red_led_off();
-					green_led_off();
-					blue_led_on();
-					break;
-				}
-				default: break;
+		parse_rpc_request(&method, params, message);
+		
+		if (method == 30) {
+			int red_i;
+			if (sscanf(params, "i%d", &red_i) == 1) {
+				brightness(red_i, 0, 0);
+				// uart0_puts("#%ci255@");
 			}
 		}
+		else if (method == 31) {
+			int green_i;
+			if (sscanf(params, "i%d", &green_i) == 1) {
+				brightness(0, green_i, 0);
+			}
+		}
+		else if (method == 32) {
+			int blue_i;
+			if (sscanf(params, "i%d", &blue_i) == 1) {
+				brightness(0, 0, blue_i);
+			}
+		}
+		// else if (method == 33) {
+			
+		// }
 	}
 	return 0;	
 }

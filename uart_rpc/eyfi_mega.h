@@ -121,6 +121,7 @@ void green_led_on();
 void green_led_off();
 void blue_led_on();
 void blue_led_off();
+void brightness(unsigned char red_led, unsigned char green_led, unsigned char blue_led);
 
 // Definitions for USER_SW (Push Button)
 void user_sw_init();

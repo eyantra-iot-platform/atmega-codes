@@ -21,6 +21,41 @@
 * Description:      Initialize the RGB LED (Common Anode) Port Pins and initially turn it OFF
 * 
 ***************************************************************************************************/
+
+static void timer4_init()
+{
+	cli(); //disable all interrupts
+	
+	TCCR4B = 0x00;	//Stop
+	
+	TCNT4H = 0xFF;	//Counter higher 8-bit value to which OCR5xH value is compared with
+	TCNT4L = 0x00;	//Counter lower 8-bit value to which OCR5xH value is compared with
+	
+	OCR4AH = 0x00;	//Output compare register high value for Red Led
+	OCR4AL = 0xFF;	//Output compare register low value for Red Led
+	
+	OCR4BH = 0x00;	//Output compare register high value for Blue Led
+	OCR4BL = 0xFF;	//Output compare register low value for Blue Led
+
+	OCR4CH = 0x00;	//Output compare register high value for Green Led
+	OCR4CL = 0xFF;	//Output compare register low value for Green Led
+	
+	//  Clear OC4A, OC4B & OC4C on compare match (set output to low level)
+	TCCR4A |= (1 << COM4A1) | (1 << COM4B1) | (1 << COM4C1);
+	TCCR4A &= ~((1 << COM4A0) | (1 << COM4B0) | (1 << COM4C0));
+
+	// FAST PWM 8-bit Mode
+	TCCR4A |= (1 << WGM40);
+	TCCR4A &= ~(1 << WGM41);
+	TCCR4B |= (1 << WGM42);
+	
+	// Set Prescalar to 64
+	TCCR4B |= (1 << CS41) | (1 << CS40);
+	TCCR4B &= ~(1 << CS42);
+	
+	sei(); //re-enable interrupts
+}
+
 void rgb_led_init()
 {
     // update the data directions of RED_LED_PIN, GREEN_LED_PIN, BLUE_LED_PIN as OUTPUT
@@ -33,6 +68,9 @@ void rgb_led_init()
     update_bit( RGB_LED_PORT_REG, RED_LED_PIN, PIN_HIGH );
     update_bit( RGB_LED_PORT_REG, GREEN_LED_PIN, PIN_HIGH );
     update_bit( RGB_LED_PORT_REG, BLUE_LED_PIN, PIN_HIGH );
+
+    // PWM
+    timer4_init();
 }
 
 
@@ -265,3 +303,9 @@ unsigned char get_adc_channel_data(unsigned char channel_no)
 	return a;
 }
 
+// Function for brightness control of all 3 LEDs
+void brightness (unsigned char red_led, unsigned char green_led, unsigned char blue_led) {
+	OCR4AL = 255 - (unsigned char)red_led; 	// active low thats why subtracting by 255
+	OCR4CL = 255 - (unsigned char)green_led;
+	OCR4BL = 255 - (unsigned char)blue_led;
+}
