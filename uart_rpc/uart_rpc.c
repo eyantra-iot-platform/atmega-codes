@@ -28,10 +28,11 @@ int main(void) {
 
 		parse_rpc_request(&method, params, message);
 		
-		if (method == 20) {
+		if (method == 65) {
 			double flow_readings = 7.65;
-			char response[100];
-			create_rpc_response(response, method, "d7.65");
+			char response[100], params[100];
+			encode_params(params, "%lf", flow_readings);
+    		create_rpc_response(response, method, params);
 			uart0_puts(response);
 		}
 		else if (method == 30) {

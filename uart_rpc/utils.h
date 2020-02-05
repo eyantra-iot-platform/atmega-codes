@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 /* Fetch and stores UART-RPC request message in a char array.
 
@@ -14,20 +15,14 @@ Returns -1 if error
 int fetch_rpc_request(char* message, unsigned short (*get_data)());
 
 /* Parse UART-RPC request message */
-int parse_rpc_request(char* method, char* params, char* message);
+int parse_rpc_request(char* method, const char* params, const char* message);
 
 /*
 Encode parameters of a UART-RPC message, both request and response
 */
-void encode_params(char* param, char* data_type, void* value);
-
-/*
-Concatenate parameters of a UART-RPC message, both request and response,
-with a delimeter.
-*/
-void concat_params(char* result, char* param1, char* param2);
+void encode_params(char* params, const char* fmt, ...);
 
 /* Create UART-RPC response message */
-int create_rpc_response(char* response, char method, char* params);
+int create_rpc_response(char* response, const char method, const char* params);
 
 #endif

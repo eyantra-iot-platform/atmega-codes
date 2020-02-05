@@ -51,34 +51,64 @@ int fetch_rpc_request(char* message, unsigned short (*get_data)()) {
     return 1;
 }
 
-int parse_rpc_request(char* method, char* params, char* message) {
+int parse_rpc_request(char* method, const char* params, const char* message) {
     return (sscanf(message, "%c%s", method, params) == 2);
 }
 
-void encode_params(char* param, char* data_type, void* value) {
-  // every param has a type and a value
-  // supported types
-  // int -> i; double -> d; string -> s
-  // separator is a hash
-  // order of parameters matters
-  if (!strcmp(data_type, "int")) {
-    int* int_val = (int*)value;
-    sprintf(param, "i%d", *int_val);
-  }
-  else if (!strcmp(data_type, "double")) {
-    double* dbl_val = (double*)value;
-    sprintf(param, "d%.3lf", *dbl_val);
-  }
-  else if (!strcmp(data_type, "string")) {
-    char* conv_val = (char*)value;
-    sprintf(param, "s%s", conv_val);
-  }
+void encode_params(char* params, const char* fmt, ...) {
+    // every param has a type and a value
+    // supported types
+    // int -> i; double -> d; string -> s
+    // separator is a hash
+    // order of parameters matters
+    va_list args;
+    va_start(args, fmt);
+
+    while (*fmt != '\0') {
+        char str_repr[30], first_char;
+        int UNKWN = 0;
+
+        if (*fmt != '%') {
+            fmt++;
+            continue;
+        }
+
+        first_char = *++fmt;
+
+        if (first_char == 'd') {
+            int value = va_arg(args, int);
+            sprintf(str_repr, "d%d", value);
+        } else if (first_char == 's') {
+            sprintf(str_repr, "s%s", va_arg(args, char*));
+        } else if (first_char == 'c') {
+            sprintf(str_repr, "c%c", va_arg(args, int));
+        } else if (first_char == 'f') {
+            sprintf(str_repr, "f%.3f", va_arg(args, double));
+        } else if (first_char == 'l') {
+            // NOT TESTED
+            if (*(fmt+1) == 'f')
+                sprintf(str_repr, "lf%.3lf", va_arg(args, double));
+            else if (*(fmt+1) == 'd')
+                sprintf(str_repr, "ld%ld", va_arg(args, long));
+        } else {
+            UNKWN = 1;
+        }
+
+        if (UNKWN == 0) {
+            // return count for correctly parsed variables; count++;
+            if (strlen(params) != 0)
+                sprintf(params, "%s,%s", params, str_repr);
+            // printf("%d %s\n", strlen(params), str_repr);
+            else
+                strcpy(params, str_repr);
+        }
+        
+        fmt++;
+    }
+
+    va_end(args);
 }
 
-void concat_params(char* result, char* param1, char* param2) {
-    sprintf(result, "%s,%s", param1, param2);
-}
-
-int create_rpc_response(char* response, char method, char* params) {
+int create_rpc_response(char* response, const char method, const char* params) {
     sprintf(response, "#%c%s@", method, params);
 }
