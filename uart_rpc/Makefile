@@ -36,7 +36,7 @@ $(PROJECT_NAME).hex: $(PROJECT_NAME).elf
 	$(AVR_OBJCOPY) -j .text -j .data -O ihex $(BUILDDIR)/$(PROJECT_NAME).elf $(BUILDDIR)/$(PROJECT_NAME).hex
 
 $(PROJECT_NAME).elf: $(C_OBJ) all_2
-	$(AVR_CC) -g -mmcu=$(CPU) -o $(BUILDDIR)/$(PROJECT_NAME).elf $(DIR_C_OBJ)
+	$(AVR_CC) -Wl,-u,vfprintf -lprintf_flt -lm -g -mmcu=$(CPU) -o $(BUILDDIR)/$(PROJECT_NAME).elf $(DIR_C_OBJ)
 
 # dependencies chain
 all_2: $(objects)

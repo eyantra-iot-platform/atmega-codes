@@ -51,16 +51,19 @@ int fetch_rpc_request(char* message, unsigned short (*get_data)()) {
     return 1;
 }
 
-int parse_rpc_request(char* method, const char* params, const char* message) {
+int parse_rpc_request(char* method, char* params, const char* message) {
     return (sscanf(message, "%c%s", method, params) == 2);
 }
 
-void encode_params(char* params, const char* fmt, ...) {
+void encode_params(char* params, int should_concat, const char* fmt, ...) {
     // every param has a type and a value
     // supported types
     // int -> i; double -> d; string -> s
     // separator is a hash
     // order of parameters matters
+    if (should_concat == 0)
+        params[0] = '\0';
+
     va_list args;
     va_start(args, fmt);
 
@@ -76,8 +79,7 @@ void encode_params(char* params, const char* fmt, ...) {
         first_char = *++fmt;
 
         if (first_char == 'd') {
-            int value = va_arg(args, int);
-            sprintf(str_repr, "d%d", value);
+            sprintf(str_repr, "d%d", va_arg(args, int));
         } else if (first_char == 's') {
             sprintf(str_repr, "s%s", va_arg(args, char*));
         } else if (first_char == 'c') {
@@ -86,10 +88,14 @@ void encode_params(char* params, const char* fmt, ...) {
             sprintf(str_repr, "f%.3f", va_arg(args, double));
         } else if (first_char == 'l') {
             // NOT TESTED
-            if (*(fmt+1) == 'f')
+            if (*(fmt+1) == 'f') {
                 sprintf(str_repr, "lf%.3lf", va_arg(args, double));
-            else if (*(fmt+1) == 'd')
+                ++fmt;
+            }
+            else if (*(fmt+1) == 'd') {
                 sprintf(str_repr, "ld%ld", va_arg(args, long));
+                ++fmt;
+            }
         } else {
             UNKWN = 1;
         }
@@ -109,6 +115,6 @@ void encode_params(char* params, const char* fmt, ...) {
     va_end(args);
 }
 
-int create_rpc_response(char* response, const char method, const char* params) {
+void create_rpc_response(char* response, const char method, const char* params) {
     sprintf(response, "#%c%s@", method, params);
 }

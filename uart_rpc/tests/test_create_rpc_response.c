@@ -12,13 +12,12 @@ void tearDown(void) {
 }
 
 void test_function_create_rpc_response(void) {
-    char method, params[100], response[100];
     double flow_readings = 7.65;
-    // create_rpc_response(response, 65, "f-1.25,d-45,shello,d87");
+    char method = 65;
+    char response[100], params[100];
     encode_params(params, "%lf", flow_readings);
-    create_rpc_response(response, 65, params);
-
-    TEST_ASSERT_EQUAL_STRING("#Alf7.650@\0", response);
+    create_rpc_response(response, method, params);
+    TEST_ASSERT_EQUAL_STRING("#Alf7.650@", response);
 }
 
 // not needed when using generate_test_runner.rb

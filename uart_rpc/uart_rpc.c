@@ -18,48 +18,52 @@ int main(void) {
 
 		status = fetch_rpc_request(message, uart0_getc);
 
-		if (status == -1)
+		if (status == -1) {
 			continue;
+		}
 
 		if (status == 0) {
-			uart0_puts(message);
+			// uart0_puts(message);
 			continue;
 		}
 
 		parse_rpc_request(&method, params, message);
-		
+		char response[100];
 		if (method == 65) {
-			double flow_readings = 7.65;
-			char response[100], params[100];
-			encode_params(params, "%lf", flow_readings);
+			encode_params(params, 0,"%lf", 7.125);
     		create_rpc_response(response, method, params);
 			uart0_puts(response);
 		}
 		else if (method == 30) {
 			int red_i;
-			if (sscanf(params, "i%d", &red_i) == 1) {
+			if (sscanf(params, "d%d", &red_i) == 1) {
 				brightness(red_i, 0, 0);
-				// uart0_puts("#%ci255@");
+				encode_params(params, 0,"%d", red_i);
+				create_rpc_response(response, method, params);
+				uart0_puts(response);
 			}
 		}
 		else if (method == 31) {
 			int green_i;
-			if (sscanf(params, "i%d", &green_i) == 1) {
+			if (sscanf(params, "d%d", &green_i) == 1) {
 				brightness(0, green_i, 0);
+				encode_params(params, 0,"%d", red_i);
+				create_rpc_response(response, method, params);
+				uart0_puts(response);
 			}
 		}
 		else if (method == 32) {
 			int blue_i;
-			if (sscanf(params, "i%d", &blue_i) == 1) {
+			if (sscanf(params, "d%d", &blue_i) == 1) {
 				brightness(0, 0, blue_i);
 			}
 		}
 		else if (method == 33) {
 			int red_i, green_i, blue_i;
-			if (sscanf(params, "i%d,i%d,i%d", &red_i, &green_i, &blue_i) == 3) {
+			if (sscanf(params, "d%d,d%d,d%d", &red_i, &green_i, &blue_i) == 3) {
 				brightness(red_i, green_i, blue_i);
 			}
 		}
 	}
-	return 0;	
+	return 0;
 }
