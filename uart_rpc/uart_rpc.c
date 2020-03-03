@@ -27,7 +27,8 @@ int main(void) {
 			continue;
 		}
 
-		parse_rpc_request(&method, params, message);
+		parse_rpc_request(method, params, message);
+
 		char response[100];
 		if (method == 65) {
 			encode_params(params, 0,"%lf", 7.125);
@@ -38,7 +39,7 @@ int main(void) {
 			int red_i;
 			if (sscanf(params, "d%d", &red_i) == 1) {
 				brightness(red_i, 0, 0);
-				encode_params(params, 0,"%d", red_i);
+				encode_params(params, 0, "%d", red_i);
 				create_rpc_response(response, method, params);
 				uart0_puts(response);
 			}
@@ -47,7 +48,7 @@ int main(void) {
 			int green_i;
 			if (sscanf(params, "d%d", &green_i) == 1) {
 				brightness(0, green_i, 0);
-				encode_params(params, 0,"%d", red_i);
+				encode_params(params, 0, "%d", green_i);
 				create_rpc_response(response, method, params);
 				uart0_puts(response);
 			}
@@ -56,14 +57,23 @@ int main(void) {
 			int blue_i;
 			if (sscanf(params, "d%d", &blue_i) == 1) {
 				brightness(0, 0, blue_i);
+				encode_params(params, 0, "d%d", blue_i);
+				create_rpc_response(response, method, params);
+				uart0_puts(response);
 			}
 		}
 		else if (method == 33) {
 			int red_i, green_i, blue_i;
 			if (sscanf(params, "d%d,d%d,d%d", &red_i, &green_i, &blue_i) == 3) {
 				brightness(red_i, green_i, blue_i);
+				encode_params(params, 0, "%d%d%d", red_i, green_i, blue_i);
+				create_rpc_response(response, method, params);
+				uart0_puts(response);
 			}
 		}
+		// Add for OLED
+		// Add for Joystick
+		// Add for Line Follower Array
 	}
 	return 0;
 }

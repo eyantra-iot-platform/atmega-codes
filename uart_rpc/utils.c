@@ -51,8 +51,12 @@ int fetch_rpc_request(char* message, unsigned short (*get_data)()) {
     return 1;
 }
 
-int parse_rpc_request(char* method, char* params, const char* message) {
+int parse_rpc_request(char method, char* params, const char* message) {
     return (sscanf(message, "%c%s", method, params) == 2);
+}
+
+int parse_rpc_response(char method, char* params, const char* message) {
+	return parse_rpc_request(method, params, message);
 }
 
 void encode_params(char* params, int should_concat, const char* fmt, ...) {
