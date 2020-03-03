@@ -71,6 +71,9 @@ int main(void) {
 				uart0_puts(response);
 			}
 		}
+		else {
+			uart0_puts("Invalid method!");
+		}
 		// Add for OLED
 		// Add for Joystick
 		// Add for Line Follower Array
