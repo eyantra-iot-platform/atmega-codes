@@ -51,15 +51,15 @@ int fetch_rpc_request(char* message, unsigned short (*get_data)()) {
     return 1;
 }
 
-int parse_rpc_request(char method, char* params, const char* message) {
+int parse_rpc_request(char* method, char* params, char* message) {
     return (sscanf(message, "%c%s", method, params) == 2);
 }
 
-int parse_rpc_response(char method, char* params, const char* message) {
+int parse_rpc_response(char* method, char* params, char* message) {
 	return parse_rpc_request(method, params, message);
 }
 
-void encode_params(char* params, int should_concat, const char* fmt, ...) {
+void encode_params(char* params, int should_concat, char* fmt, ...) {
     // every param has a type and a value
     // supported types
     // int -> i; double -> d; string -> s
@@ -119,6 +119,6 @@ void encode_params(char* params, int should_concat, const char* fmt, ...) {
     va_end(args);
 }
 
-void create_rpc_response(char* response, const char method, const char* params) {
+void create_rpc_response(char* response, char method, char* params) {
     sprintf(response, "#%c%s@", method, params);
 }

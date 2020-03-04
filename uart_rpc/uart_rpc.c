@@ -13,10 +13,13 @@ int main(void) {
 	
 	while(1) {
 		int status;
-		char message[100], params[100];
-		char method;
+		char request[100], params[100];
+		char response[100];
+		char method = 'a';
 
-		status = fetch_rpc_request(message, uart0_getc);
+		status = fetch_rpc_request(request, uart0_getc);
+		sprintf(response, "Request is: #%s@", request);
+		uart0_puts(response);
 
 		if (status == -1) {
 			continue;
@@ -27,9 +30,10 @@ int main(void) {
 			continue;
 		}
 
-		parse_rpc_request(method, params, message);
+		int success = parse_rpc_request(&method, params, request);
+		sprintf(response, "Is true: %d, m: %d, p: %s\n", success, method, params);
+		uart0_puts(response);
 
-		char response[100];
 		if (method == 65) {
 			encode_params(params, 0,"%lf", 7.125);
     		create_rpc_response(response, method, params);
@@ -72,7 +76,9 @@ int main(void) {
 			}
 		}
 		else {
-			uart0_puts("Invalid method!");
+			uart0_puts("Invalid method!\n");
+			sprintf(response, "#%d%s@", method, params);
+			uart0_puts(response);
 		}
 		// Add for OLED
 		// Add for Joystick
