@@ -15,12 +15,12 @@ Returns -1 if error
 int fetch_rpc_request(char* message, unsigned short (*get_data)());
 
 /* Parse UART-RPC request message */
-int parse_rpc_request(char* method, char* params, char* message);
+int parse_rpc_request(char* method, int* req_id, char* params, char* message);
 
 /*
 Parse a response message from UART-RPC
 */
-int parse_rpc_response(char* method, char* params, char* message);
+int parse_rpc_response(char* method, int* req_id, char* params, char* message);
 
 /*
 Encode parameters of a UART-RPC message, both request and response
@@ -28,6 +28,6 @@ Encode parameters of a UART-RPC message, both request and response
 void encode_params(char* params, int should_concat, char* fmt, ...);
 
 /* Create UART-RPC response message */
-void create_rpc_response(char* response, char method, char* params);
+void create_rpc_response(char* response, char method, int req_id, char* params);
 
 #endif

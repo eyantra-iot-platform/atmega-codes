@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "unity.h"
-#include "utils.h"
+#include "avr_rpc_utils.h"
 
 void setUp(void) {
     // set stuff up here

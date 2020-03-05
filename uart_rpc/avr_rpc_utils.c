@@ -51,12 +51,12 @@ int fetch_rpc_request(char* message, unsigned short (*get_data)()) {
     return 1;
 }
 
-int parse_rpc_request(char* method, char* params, char* message) {
-    return (sscanf(message, "%c%s", method, params) == 2);
+int parse_rpc_request(char* method, int* req_id, char* params, char* message) {
+    return (sscanf(message, "%c%d%s", method, req_id, params) == 3);
 }
 
-int parse_rpc_response(char* method, char* params, char* message) {
-	return parse_rpc_request(method, params, message);
+int parse_rpc_response(char* method, int* req_id, char* params, char* message) {
+	return parse_rpc_request(method, req_id, params, message);
 }
 
 void encode_params(char* params, int should_concat, char* fmt, ...) {
@@ -119,6 +119,6 @@ void encode_params(char* params, int should_concat, char* fmt, ...) {
     va_end(args);
 }
 
-void create_rpc_response(char* response, char method, char* params) {
-    sprintf(response, "#%c%s@", method, params);
+void create_rpc_response(char* response, char method, int req_id, char* params) {
+    sprintf(response, "#%c%d%s@", method, req_id, params);
 }

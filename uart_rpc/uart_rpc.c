@@ -39,8 +39,8 @@ int main(void) {
 		char method;
 
 		status = fetch_rpc_request(request, uart0_getc);
-		// sprintf(response, "Request is: #%s@", request);
-		// uart0_puts(response);
+		sprintf(response, "Request without start-stop [%s]", request);
+		uart0_puts(response);
 
 		if (status == -1) {
 			continue;
@@ -98,7 +98,7 @@ int main(void) {
 		}
 		else if (method == 40) {
 			char message[40];
-			if (sscanf(params, "%s", message) == 1) {
+			if (sscanf(params, "s%s", message) == 1) {
 				lcd_print(message);
 			}
 		}
