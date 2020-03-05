@@ -1,10 +1,31 @@
+// #define F_CPU 16000000
+
 #include "eyfi_mega.h"
 #include "uart.h"
-#include "utils.h"
+#include "avr_rpc_utils.h"
+#include "oled.h"
 
 uint16_t rx_byte;
 
+/*
+Clear and print message
+*/
+void lcd_print(char* message) {
+	oled_clrscr();
+	oled_puts(message);
+	// oled_display();
+}
+
+double get_flow() {
+	return 5.72;
+}
+
 int main(void) {
+	oled_init(OLED_DISP_ON);
+	oled_clrscr();
+	oled_charMode(DOUBLESIZE);
+	oled_puts("e-Yantra"); 
+
 	uart0_init(UART_BAUD_SELECT(9600, F_CPU));
 	uart0_flush();
 	uart0_puts("ATMega2560 UART0 says Hi!!\n");
@@ -15,11 +36,11 @@ int main(void) {
 		int status;
 		char request[100], params[100];
 		char response[100];
-		char method = 'a';
+		char method;
 
 		status = fetch_rpc_request(request, uart0_getc);
-		sprintf(response, "Request is: #%s@", request);
-		uart0_puts(response);
+		// sprintf(response, "Request is: #%s@", request);
+		// uart0_puts(response);
 
 		if (status == -1) {
 			continue;
@@ -31,11 +52,11 @@ int main(void) {
 		}
 
 		int success = parse_rpc_request(&method, params, request);
-		sprintf(response, "Is true: %d, m: %d, p: %s\n", success, method, params);
-		uart0_puts(response);
+		// sprintf(response, "Is true: %d, m: %d, p: %s\n", success, method, params);
+		// uart0_puts(response);
 
 		if (method == 65) {
-			encode_params(params, 0,"%lf", 7.125);
+			encode_params(params, 0,"%lf", get_flow());
     		create_rpc_response(response, method, params);
 			uart0_puts(response);
 		}
@@ -73,6 +94,12 @@ int main(void) {
 				encode_params(params, 0, "%d%d%d", red_i, green_i, blue_i);
 				create_rpc_response(response, method, params);
 				uart0_puts(response);
+			}
+		}
+		else if (method == 40) {
+			char message[40];
+			if (sscanf(params, "%s", message) == 1) {
+				lcd_print(message);
 			}
 		}
 		else {

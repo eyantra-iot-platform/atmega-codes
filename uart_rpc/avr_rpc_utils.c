@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "avr_rpc_utils.h"
 
 int fetch_rpc_request(char* message, unsigned short (*get_data)()) {
     int START_PRC = 0;
