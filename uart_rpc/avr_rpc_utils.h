@@ -1,9 +1,10 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef AVR_RPC_UTILS_H
+#define AVR_RPC_UTILS_H
 
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include "rpc_common.h"
 
 /* Fetch and stores UART-RPC request message in a char array.
 
@@ -14,20 +15,6 @@ Returns -1 if error
 */
 int fetch_rpc_request(char* message, unsigned short (*get_data)());
 
-/* Parse UART-RPC request message */
-int parse_rpc_request(char* method, int* req_id, char* params, char* message);
-
-/*
-Parse a response message from UART-RPC
-*/
-int parse_rpc_response(char* method, int* req_id, char* params, char* message);
-
-/*
-Encode parameters of a UART-RPC message, both request and response
-*/
-void encode_params(char* params, int should_concat, char* fmt, ...);
-
-/* Create UART-RPC response message */
-void create_rpc_response(char* response, char method, int req_id, char* params);
+int fetch_rpc_response(char* message, unsigned short (*get_data)());
 
 #endif

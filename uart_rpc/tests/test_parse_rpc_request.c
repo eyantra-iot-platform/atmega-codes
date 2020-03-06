@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "unity.h"
-#include "avr_rpc_utils.h"
+#include "rpc_common.h"
 
 void setUp(void) {
     // set stuff up here
@@ -27,7 +27,7 @@ void test_failure(void) {
     int req_id;
     char method, params[100];
 
-    int status = parse_rpc_request(&method, &req_id, params, " 90ui2d-1.25i-45shelloi87");
+    int status = parse_rpc_request(&method, &req_id, params, " uid-1.25i-45shelloi87");
 
     TEST_ASSERT_EQUAL_INT(0, status);
 }
@@ -35,7 +35,7 @@ void test_failure(void) {
 // not needed when using generate_test_runner.rb
 int main(void) {
     UNITY_BEGIN();
-    RUN_TEST(test_simple, test_failure);
-    // RUN_TEST(test_function_encode_params);
+    RUN_TEST(test_simple);
+    RUN_TEST(test_failure);
     return UNITY_END();
 }
