@@ -6,6 +6,7 @@ int fetch_rpc_request(char* message, unsigned short (*get_data)()) {
     unsigned char recv_byte;
     unsigned short recv_packet = get_data(); // packet contains error_code and data
 
+    // blocking code
     while ((recv_packet & 0xFF00) == 0x0100) {
         recv_packet = get_data();
     }

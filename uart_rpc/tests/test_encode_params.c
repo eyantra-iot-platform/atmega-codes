@@ -30,6 +30,11 @@ void test_function_encode_params(void) {
 
     encode_params(param, 0, "%d%f%s", 25, 5.23, "Haha");
     TEST_ASSERT_EQUAL_STRING("d25,f5.230,sHaha", param);
+
+    int red_i = 12, green_i = 121, blue_i = 222;
+    char response_params[40];
+    encode_params(response_params, 0, "%d%d%d", red_i, green_i, blue_i);
+    TEST_ASSERT_EQUAL_STRING("d12,d121,d222", response_params);
 }
 
 // not needed when using generate_test_runner.rb

@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-#include "rpc_common.h"
 
 /* Fetch and stores UART-RPC request message in a char array.
 

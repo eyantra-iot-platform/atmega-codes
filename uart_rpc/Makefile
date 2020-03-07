@@ -11,7 +11,7 @@ PROJECT_NAME = $(shell basename $(CURDIR))
 CPU = atmega2560
 
 AVR_CC = avr-gcc 						# exported by eY-extension
-AVR_CCFLAGS = -g -Os -mmcu=$(CPU) -std=gnu99 -c
+AVR_CCFLAGS = -g -Os -mmcu=$(CPU) -std=gnu99 -c -DUART_RX0_BUFFER_SIZE=1024 -DUART_TX0_BUFFER_SIZE=1024 -DUSART0_LARGE_BUFFER
 AVR_OBJCOPY = avr-objcopy				# exported by eY-extension
 
 BUILDDIR = build
