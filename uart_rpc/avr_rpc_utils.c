@@ -35,7 +35,8 @@ int fetch_rpc_request(char* message, unsigned short (*get_data)()) {
         
         recv_byte = recv_packet & 0x00FF;
         
-        if (recv_byte == '\0') {// || recv_byte == '\r' || recv_byte == '\n') {
+        if (recv_byte == '\0') {
+            // || recv_byte == '\r' || recv_byte == '\n') {
             break;
         }
         else if (recv_byte == '#') {
