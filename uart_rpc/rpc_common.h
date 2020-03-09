@@ -24,4 +24,9 @@ Encode parameters of a UART-RPC message, both request and response
 */
 void encode_params(char* params, int should_concat, const char* fmt, ...);
 
+/*
+Decode parameters of a UART-RPC message, both request and response
+*/
+// void decode_params(char* params, const char* fmt, ...);
+
 #endif
